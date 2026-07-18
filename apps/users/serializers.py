@@ -9,6 +9,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
+            "first_name",
             "username",
             "email",
             "password",
@@ -38,6 +39,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
+            "first_name",
             "username",
             "email",
             "birth_date",

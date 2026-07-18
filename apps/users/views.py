@@ -26,6 +26,7 @@ class RegisterView(APIView):
         return Response(
             {
                 "message": "Register berhasil",
+                "name" : user.first_name,
                 "username": user.username,
             },
             status=status.HTTP_201_CREATED,
