@@ -1,23 +1,37 @@
 from django.contrib.auth import authenticate
 
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import AllowAny
-from .serializers import RegisterSerializer, LoginSerializer, ProfileSerializer
+
+from .serializers import (
+    LoginSerializer,
+    ProfileSerializer,
+    RegisterSerializer,
+)
+
 
 class RegisterView(APIView):
     permission_classes = [AllowAny]
-    def post(self, request):
 
+    def post(self, request):
         serializer = RegisterSerializer(data=request.data)
-        
         serializer.is_valid(raise_exception=True)
+
         user = serializer.save()
-        return Response({'message': 'Register berhasil', 'username' : user.username}, status=status.HTTP_201_CREATED)
-    
+
+        return Response(
+            {
+                "message": "Register berhasil",
+                "username": user.username,
+            },
+            status=status.HTTP_201_CREATED,
+        )
+
+
 class LoginView(APIView):
     permission_classes = [AllowAny]
 
@@ -33,9 +47,9 @@ class LoginView(APIView):
         if user is None:
             return Response(
                 {
-                    "message": "Username atau password salah"
+                    "message": "Username atau password salah",
                 },
-                status=status.HTTP_401_UNAUTHORIZED
+                status=status.HTTP_401_UNAUTHORIZED,
             )
 
         refresh = RefreshToken.for_user(user)
@@ -51,44 +65,15 @@ class LoginView(APIView):
             status=status.HTTP_200_OK,
         )
 
-    permission_classes = [AllowAny]
 
-    def post(self, request):
-
-        serializer = LoginSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-
-        user = authenticate(
-            username=serializer.validated_data["username"],
-            password=serializer.validated_data["password"],
-        )
-
-        if user is None:
-            return Response(
-                {
-                    "message": "Username atau password salah"
-                },
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-
-        refresh = RefreshToken.for_user(user)
-
-        return Response(
-            {
-                "message": "Login berhasil",
-                "access": str(refresh.access_token),
-                "refresh": str(refresh),
-            },
-            status=status.HTTP_200_OK
-        )
-    
 class ProfileView(APIView):
 
     def get(self, request):
-
         serializer = ProfileSerializer(request.user)
 
         return Response(
             serializer.data,
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK,
         )
+
+

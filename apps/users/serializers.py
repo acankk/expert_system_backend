@@ -1,7 +1,8 @@
 from rest_framework import serializers
-
+from django.contrib.auth.models import Group
 from .models import User
-
+from rest_framework.permissions import BasePermission
+from django.db import transaction
 
 class RegisterSerializer(serializers.ModelSerializer):
 
@@ -18,9 +19,14 @@ class RegisterSerializer(serializers.ModelSerializer):
             "password": {"write_only": True}
         }
 
+    @transaction.atomic
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
-        
+        user = User.objects.create_user(**validated_data)
+        group, created = Group.objects.get_or_create(name="User")
+        user.groups.add(group)
+
+        return user
+
 class LoginSerializer(serializers.Serializer):
 
     username = serializers.CharField()
@@ -37,3 +43,13 @@ class ProfileSerializer(serializers.ModelSerializer):
             "birth_date",
             "profile_picture",
         )
+
+
+
+
+
+class IsAdminGroup(BasePermission):
+    message = "Hanya Admin yang dapat mengakses endpoint ini."
+
+    def has_permission(self, request, view):
+        return request.user.groups.filter(name="Admin").exists()
