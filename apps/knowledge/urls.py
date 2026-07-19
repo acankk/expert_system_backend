@@ -1,36 +1,20 @@
 from django.urls import path
 
-from .views.disease import (
-    DiseaseDetailView,
-    DiseaseListCreateView,
-)
-from .views.symptom import (
-    SymptomDetailView,
-    SymptomListCreateView,
-)
+from .views.disease import DiseaseListCreateView, DiseaseDetailView
+from .views.symptom import SymptomListCreateView, SymptomDetailView
+from .views.rule import RuleListCreateView, RuleDetailView
+
 
 urlpatterns = [
     # Disease
-    path(
-        "diseases/",
-        DiseaseListCreateView.as_view(),
-        name="disease-list-create",
-    ),
-    path(
-        "diseases/<int:id>/",
-        DiseaseDetailView.as_view(),
-        name="disease-detail",
-    ),
+    path("diseases/", DiseaseListCreateView.as_view()),
+    path("diseases/<int:id>/", DiseaseDetailView.as_view()),
 
     # Symptom
-    path(
-        "symptoms/",
-        SymptomListCreateView.as_view(),
-        name="symptom-list-create",
-    ),
-    path(
-        "symptoms/<int:id>/",
-        SymptomDetailView.as_view(),
-        name="symptom-detail",
-    ),
+    path("symptoms/", SymptomListCreateView.as_view()),
+    path("symptoms/<int:id>/", SymptomDetailView.as_view()),
+
+    # Rule
+    path("rules/", RuleListCreateView.as_view()),
+    path("rules/<int:id>/", RuleDetailView.as_view()),
 ]
