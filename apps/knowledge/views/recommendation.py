@@ -6,11 +6,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ...users.permissions import IsAdminGroup
-from ..models.disease import Disease
-from ..serializers.disease import DiseaseSerializer
+from ..models.recommendation import Recommendation
+from ..serializers.recommendation import RecommendationSerializer
 
 
-class DiseaseListCreateView(APIView):
+class RecommendationListCreateView(APIView):
 
     def get_permissions(self):
         if self.request.method == "POST":
@@ -19,10 +19,10 @@ class DiseaseListCreateView(APIView):
         return [IsAuthenticated()]
 
     def get(self, request):
-        diseases = Disease.objects.all()
+        recommendations = Recommendation.objects.all()
 
-        serializer = DiseaseSerializer(
-            diseases,
+        serializer = RecommendationSerializer(
+            recommendations,
             many=True,
         )
 
@@ -32,21 +32,21 @@ class DiseaseListCreateView(APIView):
         )
 
     def post(self, request):
-        serializer = DiseaseSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        serializer = RecommendationSerializer(data=request.data)
 
+        serializer.is_valid(raise_exception=True)
         serializer.save()
 
         return Response(
             {
-                "message": "Disease berhasil ditambahkan.",
+                "message": "Recommendation berhasil ditambahkan.",
                 "data": serializer.data,
             },
             status=status.HTTP_201_CREATED,
         )
 
 
-class DiseaseDetailView(APIView):
+class RecommendationDetailView(APIView):
 
     def get_permissions(self):
         if self.request.method in ["PUT", "DELETE"]:
@@ -56,14 +56,14 @@ class DiseaseDetailView(APIView):
 
     def get_object(self, pk):
         return get_object_or_404(
-            Disease,
+            Recommendation,
             pk=pk,
         )
 
     def get(self, request, pk):
-        disease = self.get_object(pk)
+        recommendation = self.get_object(pk)
 
-        serializer = DiseaseSerializer(disease)
+        serializer = RecommendationSerializer(recommendation)
 
         return Response(
             serializer.data,
@@ -71,10 +71,10 @@ class DiseaseDetailView(APIView):
         )
 
     def put(self, request, pk):
-        disease = self.get_object(pk)
+        recommendation = self.get_object(pk)
 
-        serializer = DiseaseSerializer(
-            disease,
+        serializer = RecommendationSerializer(
+            recommendation,
             data=request.data,
         )
 
@@ -83,20 +83,20 @@ class DiseaseDetailView(APIView):
 
         return Response(
             {
-                "message": "Disease berhasil diperbarui.",
+                "message": "Recommendation berhasil diperbarui.",
                 "data": serializer.data,
             },
             status=status.HTTP_200_OK,
         )
 
     def delete(self, request, pk):
-        disease = self.get_object(pk)
+        recommendation = self.get_object(pk)
 
-        disease.delete()
+        recommendation.delete()
 
         return Response(
             {
-                "message": "Disease berhasil dihapus.",
+                "message": "Recommendation berhasil dihapus.",
             },
             status=status.HTTP_200_OK,
         )

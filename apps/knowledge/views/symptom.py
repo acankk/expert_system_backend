@@ -54,11 +54,14 @@ class SymptomDetailView(APIView):
 
         return [IsAuthenticated()]
 
-    def get_object(self, id):
-        return get_object_or_404(Symptom, id=id)
+    def get_object(self, pk):
+        return get_object_or_404(
+            Symptom,
+            pk=pk,
+        )
 
-    def get(self, request, id):
-        symptom = self.get_object(id)
+    def get(self, request, pk):
+        symptom = self.get_object(pk)
 
         serializer = SymptomSerializer(symptom)
 
@@ -67,8 +70,8 @@ class SymptomDetailView(APIView):
             status=status.HTTP_200_OK,
         )
 
-    def put(self, request, id):
-        symptom = self.get_object(id)
+    def put(self, request, pk):
+        symptom = self.get_object(pk)
 
         serializer = SymptomSerializer(
             symptom,
@@ -86,8 +89,8 @@ class SymptomDetailView(APIView):
             status=status.HTTP_200_OK,
         )
 
-    def delete(self, request, id):
-        symptom = self.get_object(id)
+    def delete(self, request, pk):
+        symptom = self.get_object(pk)
 
         symptom.delete()
 

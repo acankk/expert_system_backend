@@ -47,24 +47,26 @@ class RuleDetailView(APIView):
     def get_permissions(self):
         if self.request.method in ["PUT", "DELETE"]:
             return [IsAdminGroup()]
-        
+
         return [IsAuthenticated()]
-    
-    def get_object(self, id):
-        return get_object_or_404(Rule, id=id)
 
+    def get_object(self, pk):
+        return get_object_or_404(
+            Rule,
+            pk=pk,
+        )
 
-    def get(self, request, id):
-        rule = self.get_object(id)
+    def get(self, request, pk):
+        rule = self.get_object(pk)
         serializer = RuleSerializer(rule)
 
         return Response(
             serializer.data,
             status=status.HTTP_200_OK,
         )
-    
-    def put(self, request, id):
-        rule = self.get_object(id)
+
+    def put(self, request, pk):
+        rule = self.get_object(pk)
 
         serializer = RuleSerializer(
             rule,
@@ -81,10 +83,9 @@ class RuleDetailView(APIView):
             },
             status=status.HTTP_200_OK,
         )
-    
 
-    def delete(self, request, id):
-        rule = self.get_object(id)
+    def delete(self, request, pk):
+        rule = self.get_object(pk)
 
         rule.delete()
 

@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import dj_database_url
-
+from datetime import timedelta
 
 
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     
     'apps.users',
     'apps.knowledge',
+    "apps.diagnosis",
 ]
 
 MIDDLEWARE = [
@@ -70,6 +71,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
+}
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
