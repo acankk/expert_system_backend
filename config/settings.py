@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'apps.users',
     'apps.knowledge',
     "apps.diagnosis",
+    "apps.dashboard",
 ]
 
 MIDDLEWARE = [

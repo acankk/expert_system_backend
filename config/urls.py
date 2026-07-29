@@ -11,6 +11,8 @@ urlpatterns = [
     path("api/knowledge/", include("apps.knowledge.urls")),
 
     path("api/diagnosis/", include("apps.diagnosis.urls")),
+
+    path("api/dashboard/", include("apps.dashboard.urls")),
 ]
 
 if settings.DEBUG:

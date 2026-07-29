@@ -1,8 +1,11 @@
-from rest_framework import serializers
-from django.contrib.auth.models import Group
-from .models import User
-from rest_framework.permissions import BasePermission
 from django.db import transaction
+from django.contrib.auth.models import Group
+
+from rest_framework import serializers
+from rest_framework.permissions import BasePermission
+
+from .models import User
+
 
 class RegisterSerializer(serializers.ModelSerializer):
 
@@ -17,24 +20,37 @@ class RegisterSerializer(serializers.ModelSerializer):
             "profile_picture",
         )
         extra_kwargs = {
-            "password": {"write_only": True}
+            "password": {
+                "write_only": True,
+            }
         }
 
     @transaction.atomic
     def create(self, validated_data):
         user = User.objects.create_user(**validated_data)
-        group, created = Group.objects.get_or_create(name="User")
+
+        group, _ = Group.objects.get_or_create(
+            name="User",
+        )
+
         user.groups.add(group)
 
         return user
 
+
 class LoginSerializer(serializers.Serializer):
 
     username = serializers.CharField()
-    password = serializers.CharField(write_only=True, trim_whitespace=False)
+
+    password = serializers.CharField(
+        write_only=True,
+        trim_whitespace=False,
+    )
 
 
 class ProfileSerializer(serializers.ModelSerializer):
+
+    groups = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -44,14 +60,26 @@ class ProfileSerializer(serializers.ModelSerializer):
             "email",
             "birth_date",
             "profile_picture",
+            "groups",
+        )
+
+    def get_groups(self, obj):
+        return list(
+            obj.groups.values_list(
+                "name",
+                flat=True,
+            )
         )
 
 
-
-
-
 class IsAdminGroup(BasePermission):
+
     message = "Hanya Admin yang dapat mengakses endpoint ini."
 
     def has_permission(self, request, view):
-        return request.user.groups.filter(name="Admin").exists()
+        if request.user.is_superuser:
+            return True
+
+        return request.user.groups.filter(
+            name="Admin",
+        ).exists()
